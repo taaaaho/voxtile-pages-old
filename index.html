@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Voxtile — 話して入力する Mac アプリ</title>
+<meta name="description" content="Voxtile は、Mac で話した日本語を、そのままカーソルの位置に入力するアプリです。英語の用語は英語のまま書きます。">
+<link rel="icon" href="icon.png">
+<style>
+  :root {
+    --bg: #f6f7fb;
+    --card: #ffffff;
+    --ink: #161a2b;
+    --soft: #5a6178;
+    --line: #e2e5ee;
+    --accent: #4f6ef0;
+    --accent-soft: #eef1ff;
+    --hero-a: #1b2340;
+    --hero-b: #0e1326;
+    --code: #f0f2f7;
+    --warn: #fff6e5;
+    --warn-line: #f2d49b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f121c;
+      --card: #171b29;
+      --ink: #e8eaf2;
+      --soft: #a3a9bd;
+      --line: #2a3044;
+      --accent: #8fa2ff;
+      --accent-soft: #1f2640;
+      --code: #222839;
+      --warn: #2b2416;
+      --warn-line: #5c4a24;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f121c; --card: #171b29; --ink: #e8eaf2; --soft: #a3a9bd; --line: #2a3044;
+    --accent: #8fa2ff; --accent-soft: #1f2640; --code: #222839; --warn: #2b2416; --warn-line: #5c4a24;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.8 -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+    font-feature-settings: "palt";
+  }
+  a { color: var(--accent); }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+
+  header.hero {
+    background: linear-gradient(180deg, var(--hero-a), var(--hero-b));
+    color: #fff;
+    padding: 56px 0 48px;
+  }
+  .hero .brand { display: flex; align-items: center; gap: 20px; }
+  .hero img { width: 96px; height: 96px; flex: none; }
+  .hero h1 { margin: 0; font-size: 40px; line-height: 1.1; letter-spacing: 0.01em; }
+  .hero .tagline { margin: 6px 0 0; color: #c9d0ff; font-size: 17px; }
+  .hero p.lead { margin: 28px 0 0; font-size: 17px; color: #e4e8ff; }
+  .hero .meta { margin-top: 14px; font-size: 13px; color: #9aa3cc; }
+
+  nav.toc {
+    background: var(--card);
+    border-bottom: 1px solid var(--line);
+    position: sticky; top: 0; z-index: 1;
+  }
+  nav.toc ul {
+    list-style: none; margin: 0; padding: 10px 0; display: flex; gap: 6px 18px; flex-wrap: wrap;
+    font-size: 14px;
+  }
+  nav.toc a { color: var(--soft); text-decoration: none; }
+  nav.toc a:hover { color: var(--accent); }
+
+  main { padding: 8px 0 64px; }
+  section { padding-top: 36px; }
+  h2 {
+    font-size: 24px; margin: 0 0 14px; padding-bottom: 8px; border-bottom: 2px solid var(--line);
+  }
+  h3 { font-size: 18px; margin: 26px 0 8px; }
+  p { margin: 10px 0; }
+  ol, ul { padding-left: 1.4em; margin: 10px 0; }
+  li { margin: 6px 0; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; margin: 14px 0;
+  }
+  .steps { counter-reset: step; list-style: none; padding: 0; }
+  .steps > li {
+    counter-increment: step; position: relative; padding: 14px 16px 14px 56px; margin: 10px 0;
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+  }
+  .steps > li::before {
+    content: counter(step); position: absolute; left: 16px; top: 14px;
+    width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff;
+    font-weight: 700; font-size: 15px; line-height: 28px; text-align: center;
+  }
+  .steps > li strong:first-child { display: block; }
+  kbd {
+    display: inline-block; min-width: 1.6em; padding: 0 6px; border: 1px solid var(--line); border-bottom-width: 2px;
+    border-radius: 6px; background: var(--card); font: 600 13px/1.6 -apple-system, sans-serif; text-align: center;
+  }
+  code { background: var(--code); border-radius: 5px; padding: 1px 6px; font-size: 0.9em; word-break: break-all; }
+  .note {
+    background: var(--warn); border: 1px solid var(--warn-line); border-radius: 12px; padding: 12px 16px; margin: 14px 0;
+  }
+  .tip { background: var(--accent-soft); border-radius: 12px; padding: 12px 16px; margin: 14px 0; }
+  .table-wrap { overflow-x: auto; margin: 12px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 15px; background: var(--card); border-radius: 12px; overflow: hidden; }
+  th, td { border-bottom: 1px solid var(--line); padding: 10px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--code); font-weight: 600; white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  .gestures { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 14px 0; }
+  .gesture { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+  .gesture .keys { font-size: 15px; margin-bottom: 6px; }
+  .gesture p { margin: 0; color: var(--soft); font-size: 14px; line-height: 1.7; }
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; margin: 10px 0; }
+  details summary { cursor: pointer; font-weight: 600; }
+  details[open] summary { margin-bottom: 6px; }
+  .small { font-size: 14px; color: var(--soft); }
+  footer { border-top: 1px solid var(--line); padding: 24px 0 40px; font-size: 14px; color: var(--soft); }
+  @media (max-width: 520px) {
+    .hero h1 { font-size: 32px; }
+    .hero img { width: 72px; height: 72px; }
+    h2 { font-size: 21px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="brand">
+      <img src="icon.png" alt="">
+      <div>
+        <h1>Voxtile</h1>
+        <p class="tagline">話して入力する、日本語のための Mac アプリ</p>
+      </div>
+    </div>
+    <p class="lead">キーを押しながら話すと、カーソルの位置に文字が入ります。「えーと」などの言いよどみは取り除き、句読点を整えます。GitHub や TypeScript のような英語の用語は、英語のまま書きます。</p>
+    <p class="meta">バージョン 0.1 ・ macOS 26 以降</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <ul>
+      <li><a href="#install">インストール</a></li>
+      <li><a href="#setup">最初の設定</a></li>
+      <li><a href="#usage">使い方</a></li>
+      <li><a href="#keys">精度を上げる</a></li>
+      <li><a href="#trouble">困ったとき</a></li>
+      <li><a href="#privacy">送られる情報</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="install">
+  <h2>インストール</h2>
+  <ol class="steps">
+    <li><strong>DMG ファイルを開く</strong><code>Voxtile-0.1.0.dmg</code> をダブルクリックします。</li>
+    <li><strong>Applications に入れる</strong>開いたウインドウで、Voxtile のアイコンを、同じウインドウにある Applications フォルダへドラッグします。</li>
+    <li><strong>起動する</strong>アプリケーションフォルダの Voxtile を開きます。Dock には出ず、画面右上のメニューバーにマイクのアイコンが出ます。</li>
+  </ol>
+  <p class="small">Apple の確認（公証）を受けたアプリなので、そのまま開けます。</p>
+</section>
+
+<section id="setup">
+  <h2>最初の設定</h2>
+  <p>初めて起動すると、設定画面の「権限」が開きます。次の 3 つを済ませてください。</p>
+  <ol class="steps">
+    <li><strong>マイク</strong>「許可する」を押し、出てきた確認で「許可」を選びます。</li>
+    <li><strong>アクセシビリティ</strong>「許可する」を押すと、システム設定が開きます。一覧の Voxtile をオンにしてください。キーを押したことを検知して、カーソルの位置に文字を入れるために使います。</li>
+    <li><strong>🌐キーを「何もしない」にする</strong>システム設定 &gt; キーボード の「🌐キーを押して」を「何もしない」に変えます。変えないと、Fn キーを押したときに絵文字や macOS の音声入力も一緒に動きます。</li>
+  </ol>
+  <div class="tip">許可したのに動かないときは、メニューバーのアイコンから「Voxtile を終了」して、もう一度開いてください。メニューのいちばん上に「⚠️ 権限の設定が必要です」が出ていなければ準備完了です。</div>
+</section>
+
+<section id="usage">
+  <h2>使い方</h2>
+  <p>文字を入れたい場所（メール、Slack、メモなど）をクリックしてから、次のように使います。</p>
+  <div class="gestures">
+    <div class="gesture">
+      <div class="keys"><kbd>fn</kbd> を押したまま話す</div>
+      <p>キーを離すと、1〜2 秒で文字が入ります。いちばん基本の使い方です。</p>
+    </div>
+    <div class="gesture">
+      <div class="keys"><kbd>fn</kbd> を素早く 2 回</div>
+      <p>キーを離しても録音が続きます（ハンズフリー）。もう一度押すと終わります。長く話すときに。</p>
+    </div>
+    <div class="gesture">
+      <div class="keys"><kbd>esc</kbd></div>
+      <p>録音中や処理中に押すと取り消します。何も入力されません。</p>
+    </div>
+  </div>
+  <p>話している間は、画面の下に聞き取った文字が出ます。最後に整えた文が入るので、途中の表示に多少の誤りがあっても大丈夫です。</p>
+
+  <h3>設定でできること</h3>
+  <p>メニューバーのアイコン &gt; 「設定…」から変えられます。</p>
+  <ul>
+    <li><strong>録音キー</strong>: Fn のほか、右 Option・右 Command・右 Control から選べます</li>
+    <li><strong>辞書</strong>: 会社名やサービス名など、決まった書き方で出したい言葉を 1 行に 1 語ずつ書きます。例: <code>Notion</code>、<code>Kubernetes</code></li>
+    <li><strong>和文と英単語の間のスペース</strong>: 「GitHub の」のように半角スペースを入れるかどうか</li>
+    <li><strong>アプリ別</strong>: 文字が入らないアプリがあったときに、入力の方法を変えます（<a href="#trouble">困ったとき</a>）</li>
+  </ul>
+</section>
+
+<section id="keys">
+  <h2>精度を上げる（任意）</h2>
+  <p>そのままでも、Mac に入っている音声認識だけで使えます。無料で、声が外に送られることもありません。ただ、専門用語や早口の聞き取りは苦手で、「えーと」などの言いよどみもそのまま入ります。</p>
+  <p>次の 2 つのサービスの「API キー」を入れると、精度が大きく上がります。</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>サービス</th><th>役割</th><th>キーがないと</th></tr>
+      <tr><td>ElevenLabs</td><td>Mac の認識が自信のないときだけ、声を送って聞き取り直す</td><td>Mac の認識結果をそのまま使う</td></tr>
+      <tr><td>Anthropic（Claude）</td><td>言いよどみを取り、句読点と表記を整える</td><td>整えずにそのまま入力する</td></tr>
+    </table>
+  </div>
+
+  <h3>費用の目安</h3>
+  <p>どちらも使った分だけの支払いで、料金は各サービスに直接払います。開発者の手元でのテストでは <strong>1 回あたり約 0.07 円</strong>、1 日 100 回使って <strong>月 200 円ほど</strong>でした（話す長さや内容で変わります）。</p>
+
+  <h3>キーの作り方</h3>
+  <details>
+    <summary>ElevenLabs のキー</summary>
+    <ol>
+      <li><a href="https://elevenlabs.io/">elevenlabs.io</a> でアカウントを作る</li>
+      <li>ログインして、API Keys の画面でキーを作る</li>
+      <li>権限（Permissions）は <strong>Speech to Text</strong> だけオンにすれば十分です</li>
+      <li>表示されたキーをコピーする（あとから見られないので、その場で）</li>
+    </ol>
+  </details>
+  <details>
+    <summary>Anthropic のキー</summary>
+    <ol>
+      <li><a href="https://console.anthropic.com/">console.anthropic.com</a> でアカウントを作る</li>
+      <li>Billing でクレジットを購入する（最低額で十分です）</li>
+      <li>API Keys で「Create Key」を押し、表示されたキーをコピーする</li>
+    </ol>
+  </details>
+  <p>キーは、Voxtile の設定 &gt; 「API キー」に貼り付けて「保存」します。キーは Mac のキーチェーンに保存され、ほかには送られません。</p>
+  <div class="note">API キーはパスワードと同じです。人に見せたり、チャットに貼ったりしないでください。</div>
+</section>
+
+<section id="trouble">
+  <h2>困ったとき</h2>
+  <details>
+    <summary>Fn を押すと、絵文字の一覧や macOS の音声入力が出る</summary>
+    <p>システム設定 &gt; キーボード の「🌐キーを押して」を「何もしない」にしてください。文字が 2 回入るときも、これが原因です。</p>
+  </details>
+  <details>
+    <summary>キーを押しても何も起きない</summary>
+    <p>システム設定 &gt; プライバシーとセキュリティ &gt; アクセシビリティ で Voxtile がオンか確かめてください。オンなのに動かないときは、一度オフにしてからオンに戻し、Voxtile を起動し直してください。</p>
+  </details>
+  <details>
+    <summary>文字が入らないアプリがある</summary>
+    <p>入らなかった文はクリップボードに残るので、<kbd>⌘</kbd> + <kbd>V</kbd> で貼り付けられます。そのアプリでは次から別の方法を自動で試します。設定 &gt; 「アプリ別」で、方法を自分で選ぶこともできます。</p>
+  </details>
+  <details>
+    <summary>短く押しただけでは何も入らない</summary>
+    <p>素早く 1 回押すのは「2 回押し（ハンズフリー）」の 1 回目とみなすため、何も入力しません。少し長めに押してから話してください。ハンズフリーを使わないなら、設定でオフにできます。</p>
+  </details>
+  <details>
+    <summary>パスワードの入力欄で反応しない</summary>
+    <p>安全のため、パスワードの入力欄では録音しません。</p>
+  </details>
+  <details>
+    <summary>アンインストールしたい</summary>
+    <ol>
+      <li>メニューバーのアイコン &gt; 「Voxtile を終了」</li>
+      <li>アプリケーションフォルダの Voxtile をゴミ箱に入れる</li>
+      <li>履歴も消すなら、Finder で <code>~/Library/Application Support/Voxtile</code> フォルダを消す</li>
+      <li>API キーも消すなら、先に設定 &gt; 「API キー」で「削除」を押しておく</li>
+    </ol>
+  </details>
+</section>
+
+<section id="privacy">
+  <h2>送られる情報</h2>
+  <div class="card">
+    <ul>
+      <li>開発者は、あなたの声・文字・使い方のデータを受け取りません。開発者のサーバーはありません</li>
+      <li>API キーを入れたときだけ、あなたの Mac から ElevenLabs と Anthropic へ直接送られます</li>
+      <li>声は、Mac の認識で十分に聞き取れたときは外に送りません</li>
+      <li>履歴はあなたの Mac の中だけに保存し、30 日で自動的に消します。録音した声そのものは保存しません</li>
+    </ul>
+  </div>
+
+  <h3>外部に送るもの</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>送り先</th><th>送るもの</th><th>送るとき</th></tr>
+      <tr><td>ElevenLabs</td><td>録音した声、辞書の単語</td><td>Mac の認識の自信度が低いときだけ（設定で「常にクラウド」なら毎回、「常に端末内」なら送らない）</td></tr>
+      <tr><td>Anthropic</td><td>書き起こした文字、入力先のアプリ名、辞書の単語</td><td>清書が有効なとき、話すたび</td></tr>
+      <tr><td>Anthropic</td><td>入力欄のカーソルの直前にある文字（最大 500 字）</td><td>同上。文の続きとして自然につなげるため。設定の「カーソルの前の文を清書に使う」をオフにすると送らない</td></tr>
+    </table>
+  </div>
+  <p>送った情報は、各社のプライバシーポリシーに従って扱われます: <a href="https://elevenlabs.io/privacy-policy">ElevenLabs</a> / <a href="https://www.anthropic.com/legal/privacy">Anthropic</a></p>
+
+  <h3>Mac の中に保存するもの</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>もの</th><th>場所</th><th>消えるとき</th></tr>
+      <tr><td>API キー</td><td>macOS のキーチェーン</td><td>設定で削除したとき</td></tr>
+      <tr><td>履歴（書き起こしと清書の結果、アプリ名、処理時間）</td><td><code>~/Library/Application Support/Voxtile</code></td><td>30 日後。フォルダを消せばすぐ</td></tr>
+      <tr><td>設定と辞書</td><td>macOS の環境設定</td><td>アプリと設定を消したとき</td></tr>
+    </table>
+  </div>
+
+  <h3>使う Mac の権限</h3>
+  <ul>
+    <li><strong>マイク</strong>: キーを押している間だけ録音する</li>
+    <li><strong>音声認識</strong>: 録音した声を Mac の中で文字にする</li>
+    <li><strong>アクセシビリティ</strong>: 録音キーを検知する、入力欄に文字を入れる、カーソルの直前の文字を読む</li>
+  </ul>
+  <p class="small">最終更新日: 2026 年 11 月 24 日。アプリの動きが変わって、扱う情報や送り先が変わるときは、このページを更新します。</p>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>お問い合わせ・不具合の報告: <a href="mailto:appfactorycloud@gmail.com">appfactorycloud@gmail.com</a></p>
+    <p>© 2026 Voxtile</p>
+  </div>
+</footer>
+
+</body>
+</html>
