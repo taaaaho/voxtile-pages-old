@@ -62,6 +62,14 @@
   .hero .tagline { margin: 6px 0 0; color: #c9d0ff; font-size: 17px; }
   .hero p.lead { margin: 28px 0 0; font-size: 17px; color: #e4e8ff; }
   .hero .meta { margin-top: 14px; font-size: 13px; color: #9aa3cc; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+  .btn {
+    display: inline-block; padding: 12px 22px; border-radius: 12px; font-weight: 700; font-size: 16px;
+    text-decoration: none; color: #fff; border: 1px solid rgba(255, 255, 255, 0.35);
+  }
+  .btn.primary { background: linear-gradient(90deg, #2bb8c9, #6a4fe8); border-color: transparent; }
+  .btn:hover { filter: brightness(1.1); }
+  section .btn.primary { margin: 6px 0 4px; }
 
   nav.toc {
     background: var(--card);
@@ -140,7 +148,11 @@
       </div>
     </div>
     <p class="lead">キーを押しながら話すと、カーソルの位置に文字が入ります。「えーと」などの言いよどみは取り除き、句読点を整えます。GitHub や TypeScript のような英語の用語は、英語のまま書きます。</p>
-    <p class="meta">バージョン 0.1 ・ macOS 26 以降</p>
+    <div class="cta">
+      <a class="btn primary" href="https://appfactory.booth.pm/items/9214697">BOOTH で無料体験版をダウンロード</a>
+      <a class="btn" href="#buy">ライセンス 2,980 円</a>
+    </div>
+    <p class="meta">バージョン 1.0 ・ macOS 26 以降 ・ 7 日間の無料体験版あり</p>
   </div>
 </header>
 
@@ -150,6 +162,7 @@
       <li><a href="#install">インストール</a></li>
       <li><a href="#setup">最初の設定</a></li>
       <li><a href="#usage">使い方</a></li>
+      <li><a href="#buy">体験版とライセンス</a></li>
       <li><a href="#keys">精度を上げる</a></li>
       <li><a href="#trouble">困ったとき</a></li>
       <li><a href="#privacy">送られる情報</a></li>
@@ -162,7 +175,8 @@
 <section id="install">
   <h2>インストール</h2>
   <ol class="steps">
-    <li><strong>DMG ファイルを開く</strong><code>Voxtile-0.1.0.dmg</code> をダブルクリックします。</li>
+    <li><strong>ダウンロードする</strong><a href="https://appfactory.booth.pm/items/9214697">BOOTH の商品ページ</a>で「無料体験版（7 日間）」を選び、DMG ファイルをダウンロードします（無料、BOOTH へのログインが必要です）。</li>
+    <li><strong>DMG ファイルを開く</strong><code>Voxtile-1.0.0.dmg</code> をダブルクリックします。</li>
     <li><strong>Applications に入れる</strong>開いたウインドウで、Voxtile のアイコンを、同じウインドウにある Applications フォルダへドラッグします。</li>
     <li><strong>起動する</strong>アプリケーションフォルダの Voxtile を開きます。Dock には出ず、画面右上のメニューバーにマイクのアイコンが出ます。</li>
   </ol>
@@ -206,6 +220,22 @@
     <li><strong>辞書</strong>: 会社名やサービス名など、決まった書き方で出したい言葉を 1 行に 1 語ずつ書きます。例: <code>Notion</code>、<code>Kubernetes</code></li>
     <li><strong>和文と英単語の間のスペース</strong>: 「GitHub の」のように半角スペースを入れるかどうか</li>
     <li><strong>アプリ別</strong>: 文字が入らないアプリがあったときに、入力の方法を変えます（<a href="#trouble">困ったとき</a>）</li>
+  </ul>
+</section>
+
+<section id="buy">
+  <h2>体験版とライセンス</h2>
+  <p>すべての機能を <strong>7 日間</strong>無料で試せます。日数は、インストールした日ではなく、最初に録音した日から数えます。残りの日数は、メニューバーのアイコンを押すと表示されます。</p>
+  <p>気に入ったら、BOOTH でライセンス（2,980 円、買い切り）を購入してください。アプリを入れ直す必要はありません。</p>
+  <p><a class="btn primary" href="https://appfactory.booth.pm/items/9214697">BOOTH でライセンスを購入する</a></p>
+  <ol class="steps">
+    <li><strong>BOOTH で購入する</strong>購入後、BOOTH のメッセージでライセンスキー（<code>VOXTILE-</code> で始まる 1 行）が届きます。通常 1 日以内です。</li>
+    <li><strong>キーを登録する</strong>メニューバーのアイコン &gt; 「設定…」&gt;「ライセンス」に貼り付けて「登録」を押します。途中で改行されていても大丈夫です。ネットにつながっていなくても登録できます。</li>
+  </ol>
+  <ul>
+    <li>1 ライセンスで、購入したご本人が使う Mac 3 台まで使えます</li>
+    <li>バージョン 1.x のアップデートは無料です</li>
+    <li>試用期間が終わっても、設定や辞書は消えません。キーを登録すれば、そのまま使い続けられます</li>
   </ul>
 </section>
 
